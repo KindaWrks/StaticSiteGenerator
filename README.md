@@ -1,2 +1,2 @@
 # StaticSiteGenerator
-boot dot dev project
+boot dot dev project.
