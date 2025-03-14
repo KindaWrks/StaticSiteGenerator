@@ -1,6 +1,3 @@
-from src.textnode import TextNode
-
-
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -50,5 +47,33 @@ class LeafNode(HTMLNode):
 
         # Close the opening tag, add the value, and add the closing tag
         html += f">{self.value}</{self.tag}>"
+
+        return html
+
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        # Notice: no value parameter, and children is required (not optional)
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag is None:
+            raise ValueError("ParentNode must have a tag")
+        if self.children is None:
+            raise ValueError("ParentNode must have children")
+
+        # Start with opening tag and props
+        html = f"<{self.tag}"
+        if self.props:
+            for key, value in self.props.items():
+                html += f' {key}="{value}"'
+        html += ">"
+
+        # Add HTML from all children (recursively)
+        for child in self.children:
+            html += child.to_html()
+
+        # Close the tag
+        html += f"</{self.tag}>"
 
         return html
