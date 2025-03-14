@@ -48,5 +48,57 @@ def text_node_to_html_node(text_node):
         return LeafNode("img", "", attributes)  # Note empty string for value
 
 
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    result = []
+
+    for old_node in old_nodes:
+        # Skip non-text nodes
+        if old_node.text_type != TextType.Normal_text:
+            result.append(old_node)
+            continue
+
+        # Process text node
+        text = old_node.text
+
+        # Check if the delimiter appears in the text
+        if delimiter not in text:
+            result.append(old_node)
+            continue
+
+        # Find chunks that need to be processed
+        chunks = []
+        remaining_text = text
+
+        while delimiter in remaining_text:
+            # Find the first occurrence of delimiter
+            start_index = remaining_text.find(delimiter)
+
+            # Add text before delimiter as normal text if it exists
+            if start_index > 0:
+                chunks.append((remaining_text[:start_index], TextType.Normal_text))
+
+            # Find the closing delimiter
+            remaining_text = remaining_text[start_index + len(delimiter):]
+            end_index = remaining_text.find(delimiter)
+
+            if end_index == -1:
+                # No closing delimiter found
+                raise ValueError(f"No closing delimiter found for {delimiter}")
+
+            # Add the text between delimiters with the specified text type
+            chunks.append((remaining_text[:end_index], text_type))
+
+            # Update remaining_text for next iteration
+            remaining_text = remaining_text[end_index + len(delimiter):]
+
+        # Add any remaining text as normal text
+        if remaining_text:
+            chunks.append((remaining_text, TextType.Normal_text))
+
+        # Create TextNode objects from chunks and add to result
+        for text_chunk, chunk_type in chunks:
+            result.append(TextNode(text_chunk, chunk_type))
+
+    return result
 
 
