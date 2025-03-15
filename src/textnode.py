@@ -3,6 +3,15 @@ from enum import Enum
 from src.htmlnode import LeafNode
 import re
 
+class BlockType(Enum):
+    Paragraph = "paragraph"
+    Heading = "heading"
+    Code = "code"
+    Quote = "quote"
+    Unordered_list = "unordered_list"
+    Ordered_list = "ordered_list"
+
+
 class TextType(Enum):
     Normal_text = "normal_text"
     Bold_text = "bold_text"
@@ -200,3 +209,78 @@ def split_nodes_link(old_nodes):
                 result.extend(after_nodes)
 
     return result
+
+
+def text_to_textnodes(text):
+    # Start with the entire text as a single node
+    nodes = [TextNode(text, TextType.Normal_text)]
+    # Apply delimiter splitting for bold text
+    nodes = split_nodes_delimiter(nodes, "**", TextType.Bold_text)
+    # Apply delimiter splitting for italic text
+    nodes = split_nodes_delimiter(nodes, "_", TextType.Italic_text)
+    # Apply delimiter splitting for code blocks
+    nodes = split_nodes_delimiter(nodes, "`", TextType.Code_text)
+    # Apply image splitting
+    nodes = split_nodes_image(nodes)
+    # Apply link splitting
+    nodes = split_nodes_link(nodes)
+
+    return nodes
+
+
+def markdown_to_blocks(markdown):
+    # Split the markdown into blocks using double \n as the delimiter
+    blocks = markdown.split("\n\n")
+
+    #We need to clean up each block and remove empty ones
+    cleaned_blocks = []
+    for block in blocks:
+        cleaned_block = block.strip()
+        # Only add non-empty blocks to our list
+        if cleaned_block:
+            cleaned_blocks.append(cleaned_block)
+
+    return cleaned_blocks
+
+
+def block_to_block_type(block):
+    # Check for heading
+    if block.startswith(("#", "##", "###", "####", "#####", "######")):
+        pound_count = 0
+        for char in block:
+            if char == '#':
+                pound_count += 1
+            else:
+                break
+
+        if pound_count <= 6 and pound_count > 0 and block[pound_count] == ' ':
+            return BlockType.Heading
+
+    # Check for code block
+    if block.startswith("```") and block.endswith("```"):
+        return BlockType.Code
+
+    # Split the block into lines
+    lines = block.split("\n")
+
+    # Check for quote block
+    if all(line.startswith(">") for line in lines) and lines:  # Make sure there's at least one line
+        return BlockType.Quote
+
+    # Check for unordered list
+    if all(line.startswith("- ") for line in lines) and lines:  # Make sure there's at least one line
+        return BlockType.Unordered_list
+
+    # Check for ordered list
+    if lines:  # Make sure there's at least one line
+        is_ordered = True
+        for i, line in enumerate(lines):
+            if not line.startswith(f"{i + 1}. "):
+                is_ordered = False
+                break
+
+        if is_ordered:
+            return BlockType.Ordered_list
+
+    # If none of the above conditions are met, it's a paragraph
+    return BlockType.Paragraph
