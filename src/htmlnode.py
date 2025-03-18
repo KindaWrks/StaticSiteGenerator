@@ -1,6 +1,7 @@
 class HTMLNode:
-    def __init__(self, tag=None, value=None, children=None, props=None):
+    def __init__(self, tag=None, attributes=None, value=None, children=None, props=None):
         self.tag = tag
+        self.attributes = attributes or {}  # Initialize to an empty dict if None
         self.value = value
         self.children = children
         self.props = props
@@ -24,56 +25,33 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag, value, attributes=None):
-        # Call the parent constructor with super()
-        # Make sure to pass the parameters in the correct order
-        # HTMLNode.__init__(self, tag, value, children, props)
-        super().__init__(tag, value, [], attributes)  # Note the order!
+    def __init__(self, tag=None, value="", attributes=None):
+        super().__init__(tag, attributes)
+        self.value = value
 
     def to_html(self):
-        if self.value is None:
-            raise ValueError("Leaf node must have a value")
-
         if self.tag is None:
             return self.value
 
-        # Start building the HTML tag
-        html = f"<{self.tag}"
+        attributes_html = ""
+        for attr, value in self.attributes.items():
+            attributes_html += f' {attr}="{value}"'
 
-        # Use self.props instead of self.attributes
-        if self.props:
-            for key, value in self.props.items():
-                html += f' {key}="{value}"'
-
-        # Close the opening tag, add the value, and add the closing tag
-        html += f">{self.value}</{self.tag}>"
-
-        return html
+        return f"<{self.tag}{attributes_html}>{self.value}</{self.tag}>"
 
 
 class ParentNode(HTMLNode):
-    def __init__(self, tag, children, props=None):
-        # Notice: no value parameter, and children is required (not optional)
-        super().__init__(tag, None, children, props)
+    def __init__(self, tag=None, children=None, attributes=None):
+        super().__init__(tag, attributes)  # Make sure to call the parent's __init__
+        self.children = children or []
 
     def to_html(self):
-        if self.tag is None:
-            raise ValueError("ParentNode must have a tag")
-        if self.children is None:
-            raise ValueError("ParentNode must have children")
-
-        # Start with opening tag and props
-        html = f"<{self.tag}"
-        if self.props:
-            for key, value in self.props.items():
-                html += f' {key}="{value}"'
-        html += ">"
-
-        # Add HTML from all children (recursively)
+        children_html = ""
         for child in self.children:
-            html += child.to_html()
+            children_html += child.to_html()
 
-        # Close the tag
-        html += f"</{self.tag}>"
+        attributes_html = ""
+        for attr, value in self.attributes.items():
+            attributes_html += f' {attr}="{value}"'
 
-        return html
+        return f"<{self.tag}{attributes_html}>{children_html}</{self.tag}>"

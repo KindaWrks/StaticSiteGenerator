@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.htmlnode import LeafNode
+from htmlnode import LeafNode
 import re
 
 class BlockType(Enum):
@@ -254,22 +254,22 @@ def block_to_block_type(block):
                 break
 
         if pound_count <= 6 and pound_count > 0 and block[pound_count] == ' ':
-            return BlockType.Heading
+            return "heading"
 
     # Check for code block
     if block.startswith("```") and block.endswith("```"):
-        return BlockType.Code
+        return "code"
 
     # Split the block into lines
     lines = block.split("\n")
 
     # Check for quote block
     if all(line.startswith(">") for line in lines) and lines:  # Make sure there's at least one line
-        return BlockType.Quote
+        return "quote"
 
     # Check for unordered list
     if all(line.startswith("- ") for line in lines) and lines:  # Make sure there's at least one line
-        return BlockType.Unordered_list
+        return "unordered_list"
 
     # Check for ordered list
     if lines:  # Make sure there's at least one line
@@ -280,7 +280,7 @@ def block_to_block_type(block):
                 break
 
         if is_ordered:
-            return BlockType.Ordered_list
+            return "ordered_list"
 
     # If none of the above conditions are met, it's a paragraph
-    return BlockType.Paragraph
+    return "paragraph"
