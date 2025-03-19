@@ -48,6 +48,23 @@ def inline_markdown_to_textnodes(text):
     i = 0
 
     while i < len(text):
+
+        # Handle inline code with backticks
+        if text[i] == '`' and i + 1 < len(text):
+            end = text.find('`', i + 1)
+            if end != -1:
+                # If there's text before the code, add it as regular text
+                if i > 0:
+                    nodes.append(TextNode(text[:i], "text"))
+
+                # Add the code text
+                nodes.append(TextNode(text[i + 1:end], "code"))
+
+                # Continue processing the rest of the text
+                text = text[end + 1:]
+                i = 0
+                continue
+
         # Handle links [text](url)
         if text[i] == '[':
             closing_bracket = text.find(']', i)
