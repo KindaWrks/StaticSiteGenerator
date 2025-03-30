@@ -1,18 +1,16 @@
 # Gambit Fan Club
 
-![Gambit Looking](/images/GAMBIT_banner.png)
+![Gambit Looking](/images/GAMBIT_banner.jpg)
 
-Here's the deal, **I like Tolkien**.
+Here's the deal, **I like Gambit**.
 
-> "I am in fact a Hobbit in all but size."
->
-> -- J.R.R. Tolkien
+> "I enjoy the series X-Men and Gambit."
 
-## Blog posts
+## Other Pages
 
-- [Why Glorfindel is More Impressive than Legolas](/blog/glorfindel)
-- [Why Tom Bombadil Was a Mistake](/blog/tom)
-- [The Unparalleled Majesty of "The Lord of the Rings"](/blog/majesty)
+- [Gambit's Powers or lack of](/blog/powers)
+- [Gambit's past](/blog/past)
+- [Gambit's incarnations"](/blog/incarnations)
 
 ## Reasons I like Tolkien
 
