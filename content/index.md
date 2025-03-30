@@ -1,6 +1,6 @@
-# Tolkien Fan Club
+# Gambit Fan Club
 
-![JRR Tolkien sitting](/images/tolkien.png)
+![Gambit Looking](/images/GAMBIT_banner.png)
 
 Here's the deal, **I like Tolkien**.
 
